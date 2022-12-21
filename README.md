@@ -26,3 +26,4 @@ Think of your personal bank account experience When in doubt, go for the simples
 
 ## What do you need
 - Java 8
+- Junit
