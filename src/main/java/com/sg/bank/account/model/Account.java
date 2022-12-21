@@ -10,7 +10,7 @@ import java.util.List;
 @Data
 @Builder
 public class Account implements Serializable {
-    private static final long serialVersionID = 1l;
+    private static final long SERIAL_VERSION_ID = 1l;
 
     private Long accountId;
     private Client client;

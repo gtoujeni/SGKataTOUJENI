@@ -12,7 +12,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @Builder
 public class Client implements Serializable {
-    private static final long serialVersionID = 1l;
+    private static final long SERIAL_VERSION_ID = 1L;
 
     private Long clientId;
     private String firstName;

@@ -9,37 +9,39 @@ import com.sg.bank.account.service.AccountHistoryServiceImp;
 import com.sg.bank.account.service.AccountManagerServiceImp;
 import com.sg.bank.account.service.IAccountHistoryService;
 import com.sg.bank.account.service.IAccountManagerService;
+import com.sg.bank.account.util.BankConstants;
 import org.assertj.core.api.Assertions;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.Random;
 import java.util.stream.Collectors;
 
 public class AccountManagerServiceTest {
+    private static final Long CLIENT_ID = Math.abs(new Random().nextLong());
+    private static final Long ACCOUNT_ID = Math.abs(new Random().nextLong());
 
-    private static final Long CLIENT_ID = new Random().nextLong();
-    private static final Long ACCOUNT_ID = new Random().nextLong();
+    private Client client;
+    private Account account;
 
     @InjectMocks
-    private IAccountHistoryService accountHistoryService = new AccountHistoryServiceImp();
+    private final IAccountHistoryService accountHistoryService = new AccountHistoryServiceImp();
 
     @InjectMocks
-    private IAccountManagerService accountManagerService = new AccountManagerServiceImp(accountHistoryService);
+    private final IAccountManagerService accountManagerService = new AccountManagerServiceImp(accountHistoryService);
+    @Before
+    public void executedBeforeEach(){
 
-
+        client = Client.builder().clientId(CLIENT_ID).firstName(BankConstants.FIRST_NAME).lastName(BankConstants.LAST_NAME).build();
+        account = Account.builder().client(client).accountId(ACCOUNT_ID).build();
+    }
     @Test
     public void testDepositOperation() {
 
-        Client client = Client.builder().clientId(CLIENT_ID).firstName("Ghazi").lastName("TOUJENI").build();
-        // Given
-        Account
-                account =
-                Account.builder().client(client).accountId(ACCOUNT_ID).build();
 
         // When
         Transaction transaction = accountManagerService.depositOperation(account, 500.00);
@@ -56,14 +58,8 @@ public class AccountManagerServiceTest {
     @Test
     public void testWithdrawalOperation_withAuthorizedOperation() throws UnauthorizedOperationException {
 
-        Client client = Client.builder().clientId(CLIENT_ID).firstName("Ghazi").lastName("TOUJENI").build();
-        // Given
-        Account
-                account =
-                Account.builder().client(client).accountId(ACCOUNT_ID).build();
-
         // When
-        Transaction depositTransaction = accountManagerService.depositOperation(account, 500.00);
+        accountManagerService.depositOperation(account, 500.00);
         Transaction withdrawalTransaction = accountManagerService.withdrawalOperation(account, 400.00);
         // Then
         Assertions.assertThat(account.getTransactions()).isNotNull();
@@ -79,13 +75,8 @@ public class AccountManagerServiceTest {
     @Test
     public void testWithdrawalOperation_withUnauthorizedOperation(){
 
-        Client client = Client.builder().clientId(CLIENT_ID).firstName("Ghazi").lastName("TOUJENI").build();
-        // Given
-        Account
-                account =
-                Account.builder().client(client).accountId(ACCOUNT_ID).build();
         // When
-        Transaction depositTransaction = accountManagerService.depositOperation(account, 500.00);
+        accountManagerService.depositOperation(account, 500.00);
         Assertions.assertThatThrownBy(() -> accountManagerService.withdrawalOperation(account, 600.00))
                 .isInstanceOf(UnauthorizedOperationException.class).hasMessageContaining(ACCOUNT_ID.toString());
 
@@ -94,23 +85,17 @@ public class AccountManagerServiceTest {
     @Test
     public void testShowHistory() throws UnauthorizedOperationException {
 
-        Client client = Client.builder().clientId(CLIENT_ID).firstName("Ghazi").lastName("TOUJENI").build();
-        // Given
-        Account
-                account =
-                Account.builder().client(client).accountId(ACCOUNT_ID).build();
-
         // When
-        Transaction depositTransaction = accountManagerService.depositOperation(account, 900.00);
-        Transaction withdrawalTransaction = accountManagerService.withdrawalOperation(account, 400.00);
-        Transaction depositTransaction2 = accountManagerService.depositOperation(account, 400.00);
-        Transaction withdrawal2Transaction = accountManagerService.withdrawalOperation(account, 100.00);
-        Transaction withdrawal3Transaction = accountManagerService.withdrawalOperation(account, 50.00);
-        Transaction depositTransaction3 = accountManagerService.depositOperation(account, 450.00);
+        accountManagerService.depositOperation(account, 900.00);
+        accountManagerService.withdrawalOperation(account, 400.00);
+        accountManagerService.depositOperation(account, 400.00);
+        accountManagerService.withdrawalOperation(account, 100.00);
+        accountManagerService.withdrawalOperation(account, 50.00);
+        accountManagerService.depositOperation(account, 450.00);
         String accountHistory = accountManagerService.showAccountHistory(account);
         Assert.assertNotNull(accountHistory);
         List<String> histories = Arrays.stream(accountHistory.split(System.lineSeparator())).collect(Collectors.toList());
-        Assert.assertTrue(!histories.isEmpty());
+        Assert.assertFalse(histories.isEmpty());
         Assert.assertEquals(histories.size(), 7);
     }
 

@@ -10,11 +10,11 @@ import java.util.concurrent.atomic.AtomicLong;
 @Data
 @Builder
 public class Transaction implements Serializable {
-    private static AtomicLong REFERENCE_TRANSACTION = new AtomicLong(10000);
-    private static final long serialVersionID = 1l;
+    private static AtomicLong referenceTransaction = new AtomicLong(10000);
+    private static final long SERIAL_VERSION_ID = 1L;
 
     @Builder.Default
-    private Long reference = REFERENCE_TRANSACTION.addAndGet(1);
+    private Long reference = referenceTransaction.addAndGet(1);
 
     private LocalDateTime transactionTimestamp;
 
@@ -23,7 +23,7 @@ public class Transaction implements Serializable {
     private TransactionType transactionType;
 
     public Boolean isDepositTransaction() {
-        return transactionType.equals(TransactionType.DEPOSIT) ? true : false;
+        return transactionType.equals(TransactionType.DEPOSIT);
     }
 
 }

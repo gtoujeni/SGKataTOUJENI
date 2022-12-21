@@ -11,7 +11,7 @@ public class AccountHistoryServiceImp implements IAccountHistoryService {
 
     /**
      *
-     * @param account
+     * @param account : the account of client
      * @return accountHistories
      * This methode return List of account histories
      */
@@ -28,8 +28,8 @@ public class AccountHistoryServiceImp implements IAccountHistoryService {
 
     /**
      *
-     * @param transaction
-     * @param transactions
+     * @param transaction : current transaction
+     * @param transactions : list of transactions by client
      * @return
      * This method will return the balance of an account at a transaction
      */
@@ -39,7 +39,7 @@ public class AccountHistoryServiceImp implements IAccountHistoryService {
                         op.getReference() <= transaction.getReference()
                 )
                 .mapToDouble(op ->
-                        op.getAmount() * (op.isDepositTransaction() ? 1 : -1)
+                        op.getAmount() * (Boolean.TRUE.equals(op.isDepositTransaction()) ? 1 : -1)
                 ).sum();
     }
 }
