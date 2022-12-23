@@ -37,7 +37,8 @@ public class AccountManagerServiceTest {
     public void executedBeforeEach(){
 
         client = Client.builder().clientId(CLIENT_ID).firstName(BankConstants.FIRST_NAME).lastName(BankConstants.LAST_NAME).build();
-        account = Account.builder().client(client).accountId(ACCOUNT_ID).build();
+        account = Account.builder().client(client).accountId(ACCOUNT_ID).balanceAccount(900.00).build();
+
     }
     @Test
     public void testDepositOperation() {
@@ -77,7 +78,7 @@ public class AccountManagerServiceTest {
 
         // When
         accountManagerService.depositOperation(account, 500.00);
-        Assertions.assertThatThrownBy(() -> accountManagerService.withdrawalOperation(account, 600.00))
+        Assertions.assertThatThrownBy(() -> accountManagerService.withdrawalOperation(account, 1600.00))
                 .isInstanceOf(UnauthorizedOperationException.class).hasMessageContaining(ACCOUNT_ID.toString());
 
     }

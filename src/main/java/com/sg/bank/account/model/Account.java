@@ -16,5 +16,7 @@ public class Account implements Serializable {
     private Client client;
     @Builder.Default
     private List<Transaction> transactions = new ArrayList<>();
+    @Builder.Default
+    private Double balanceAccount = 0.00;
 
 }

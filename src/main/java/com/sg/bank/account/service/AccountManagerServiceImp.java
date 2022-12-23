@@ -39,7 +39,7 @@ public class AccountManagerServiceImp implements IAccountManagerService {
                     .append(accountHistory.getTransaction().getAmount()).append(BankConstants.TRANSACTION_HISTORY_SEPARATOR)
                     .append(accountHistory.getBalance()).append(System.lineSeparator())
         );
-        LOGGER.info(statement.toString());
+        LOGGER.info(() -> "show Account History : \n" + statement.toString());
         return statement.toString();
     }
 
@@ -75,15 +75,16 @@ public class AccountManagerServiceImp implements IAccountManagerService {
     @Override
     public Transaction withdrawalOperation(Account account, Double amount) throws UnauthorizedOperationException {
 
+        if ((account.getBalanceAccount() < amount) || amount < 0) {
+            throw new UnauthorizedOperationException(account, TransactionType.WITHDRAWAL);
+        }
+
         Transaction transaction = Transaction.builder().amount(amount)
                 .transactionType(TransactionType.WITHDRAWAL)
                 .transactionTimestamp(LocalDateTime.now())
                 .build();
 
-        if ((accountHistoryService.computeAccountBalance(transaction, account.getTransactions()) < amount) || amount < 0) {
-            throw new UnauthorizedOperationException(account, TransactionType.WITHDRAWAL);
-        }
-
+        account.setBalanceAccount(accountHistoryService.computeAccountBalance(transaction, account.getTransactions()));
         account.getTransactions().add(transaction);
 
         return transaction;

@@ -32,7 +32,7 @@ public class AccountHistoryServiceTest {
 
         client = Client.builder().clientId(CLIENT_ID).firstName(BankConstants.FIRST_NAME).lastName(BankConstants.LAST_NAME).build();
 
-        account = Account.builder().client(client).accountId(ACCOUNT_ID).build();
+        account = Account.builder().client(client).accountId(ACCOUNT_ID).balanceAccount(900.00).build();
     }
 
     @Test
