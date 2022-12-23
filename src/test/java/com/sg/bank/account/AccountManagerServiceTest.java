@@ -41,7 +41,7 @@ public class AccountManagerServiceTest {
 
     }
     @Test
-    public void testDepositOperation() {
+    public void testDepositOperation() throws UnauthorizedOperationException{
 
 
         // When
@@ -54,6 +54,15 @@ public class AccountManagerServiceTest {
         Assertions.assertThat(getTransaction.getTransactionType()).isEqualTo(TransactionType.DEPOSIT);
         Assertions.assertThat(getTransaction.getReference()).isEqualTo(transaction.getReference());
         Assertions.assertThat(getTransaction.getTransactionTimestamp()).isEqualTo(transaction.getTransactionTimestamp());
+    }
+
+    @Test
+    public void testDepositOperation_withUnauthorizedOperation() throws UnauthorizedOperationException{
+
+        // When
+        Assertions.assertThatThrownBy(() -> accountManagerService.depositOperation(account, -600.00))
+                .isInstanceOf(UnauthorizedOperationException.class).hasMessageContaining(ACCOUNT_ID.toString());
+
     }
 
     @Test
@@ -74,7 +83,7 @@ public class AccountManagerServiceTest {
     }
 
     @Test
-    public void testWithdrawalOperation_withUnauthorizedOperation(){
+    public void testWithdrawalOperation_withUnauthorizedOperation() throws UnauthorizedOperationException{
 
         // When
         accountManagerService.depositOperation(account, 500.00);

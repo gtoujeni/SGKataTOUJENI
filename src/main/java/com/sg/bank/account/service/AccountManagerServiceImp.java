@@ -51,14 +51,19 @@ public class AccountManagerServiceImp implements IAccountManagerService {
      * This method will execute a deposit operation
      */
     @Override
-    public Transaction depositOperation(Account account, Double amount) {
+    public Transaction depositOperation(Account account, Double amount) throws UnauthorizedOperationException{
 
         LOGGER.info("Deposit to account : " + account.getAccountId());
+        if (amount < 0) {
+            throw new UnauthorizedOperationException(account, TransactionType.DEPOSIT);
+        }
         Transaction transaction = Transaction.builder().amount(amount)
                 .transactionType(TransactionType.DEPOSIT)
                 .transactionTimestamp(LocalDateTime.now())
                 .build();
 
+        Double sommeBalance = account.getBalanceAccount() + amount;
+        account.setBalanceAccount(sommeBalance);
         account.getTransactions().add(transaction);
 
         return transaction;
